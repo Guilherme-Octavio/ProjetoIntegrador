@@ -1,30 +1,40 @@
-import datetime as dt
-import os
+import Document, tkinter as tk
+from tkinter import ttk, filedialog, messagebox
+# from tkinter import
+
+# global vars
+Documents: list[Document.Document]
+
+class App(tk.Tk):
+    def __init__(self):
+        super().__init__()
+
+        # configure the root window
+        self.title('My Awesome App')
+        self.geometry('1200x600')
+
+        # label
+        self.label = ttk.Label(self, text='Hello, Tkinter!')
+        self.label.pack()
+
+        # button
+        self.button = ttk.Button(self, text='Click Me')
+        self.button['command'] = self.button_clicked
+        self.button.pack()
 
 
+    def button_clicked(self):
+        file = filedialog.askopenfilename(
+            initialdir="/",  # Start directory (e.g., "/" for root on many systems, "C:/" on Windows)
+            title="Selecione um arquivo de texto", # Dialog window title
+            filetypes=(
+                ("Text files", "*.txt, *.pdf, *.docx"),  # Filter for text files
+            )
+        )
+        if not ((file.endswith(".txt")) or (file.endswith(".docx")) or (file.endswith(".pdf"))):
+            file = None
+            messagebox.showerror("Essa extensão de arquivo não é permitida")
 
-class Document:
-    Path: str
-    Name: str
-    Extension: str
-    FullContent: str
-    ContentLines: list[str]
-    is_loaded: bool
-    loaded_at: dt.datetime
+app = App()
 
-    def __init__(self, document_fullpath: str):
-        self.Path = document_fullpath
-        self.Name = os.path.basename(self.Path)
-        self.Extension = os.path.splitext(self.Path)[1]
-
-    def load_document(self) -> None:
-        if self.Path is not None:
-            with open(self.Path, 'r') as f:
-                self.FullContent = f.readline()
-                self.ContentLines = f.readlines()
-
-        if self.FullContent is not None:
-            self.is_loaded = True
-            self.loaded_at = dt.datetime.now()
-
-
+app.mainloop()
